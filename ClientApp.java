@@ -6,12 +6,21 @@ import java.io.InputStreamReader;
 public class ClientApp
 {
 
+
     public static void main(String[] args) throws Exception
     {
-        //create a new transport layer for client (hence false) (connect to server), and read in first line from keyboard
-        TransportLayer transportLayer = new TransportLayer(false);
+        boolean persistent = false;
+        double httpVersion = Double.parseDouble(args[0]);
+
+        if(httpVersion == 1.0){
+            persistent = true;
+        }
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
+
+        //create a new transport layer for client (hence false) (connect to server), and read in first line from keyboard
+        TransportLayer transportLayer = new TransportLayer(false, 0,0);
 
         //while line is not empty
         while( line != null && !line.equals("") )
@@ -26,4 +35,5 @@ public class ClientApp
             line = reader.readLine();
         }
     }
+
 }

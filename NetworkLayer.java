@@ -7,21 +7,19 @@ public class NetworkLayer
 
     private LinkLayer linkLayer;
 
-    private static final int PROP_DELAY = 500;
-    private int transDelay;
-    private static final int TRAN_RATE = 2000;
+    private int prop_delay;
+    private int trans_delay;
 
-    public NetworkLayer(boolean server)
+    public NetworkLayer(boolean server,int prop_d, int trans_d)
     {
         linkLayer = new LinkLayer(server);
-
+        prop_delay = prop_d;
+        trans_delay = trans_d;
     }
     public void send(byte[] payload)
     {
-        transDelay = payload.length / TRAN_RATE;
         try {
-            Thread.sleep(PROP_DELAY);
-            //delay trans
+            Thread.sleep(prop_delay + trans_delay);
             linkLayer.send(payload);
         } catch (InterruptedException e){
             e.printStackTrace();

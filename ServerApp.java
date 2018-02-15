@@ -7,8 +7,18 @@ public class ServerApp
 
     public static void main(String[] args) throws Exception
     {
+
+        System.out.println("Please enter propagation delay and transmission delay");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String readin = reader.readLine();
+        String[] delays = readin.split("\\s+");
+        int prop_delay = Integer.parseInt(delays[0]);
+        int trans_delay = Integer.parseInt(delays[1]);
+
         //create a new transport layer for server (hence true) (wait for client)
-        TransportLayer transportLayer = new TransportLayer(true);
+        TransportLayer transportLayer = new TransportLayer(true, prop_delay, trans_delay);
+
         while( true )
         {
             //receive message from client, and send the "received" message back.
