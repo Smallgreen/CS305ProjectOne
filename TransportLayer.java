@@ -16,7 +16,7 @@ public class TransportLayer
 
     public byte[] receive()
     {
-        byte[] payload = networkLayer.receive();    
+        byte[] payload = networkLayer.receive();
         return payload;
     }
 }
