@@ -27,10 +27,18 @@ public class ServerApp
             if(byteArray==null)
                 break;
             String str = new String ( byteArray );
-            System.out.println( str );
-            String line = "received";
-            byteArray = line.getBytes();
-            transportLayer.send( byteArray );
+
+            if(str.equals("hello")){
+                String line = "acknowledged";
+                byteArray = line.getBytes();
+                transportLayer.send( byteArray );
+            }
+            else{
+                System.out.println( str );
+                String line = "received";
+                byteArray = line.getBytes();
+                transportLayer.send( byteArray );
+            }
 
         }
     }

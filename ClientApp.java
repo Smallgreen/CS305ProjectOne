@@ -7,6 +7,8 @@ public class ClientApp
 {
 
 
+    public static boolean persistent;
+
     public static void main(String[] args) throws Exception
     {
         boolean persistent = false;
@@ -35,5 +37,6 @@ public class ClientApp
             line = reader.readLine();
         }
     }
+    
 
 }
