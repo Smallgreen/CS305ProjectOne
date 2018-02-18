@@ -16,8 +16,6 @@ public class TransportLayer
 
             //build TCP connection
             send(SYN.getBytes());
-
-            System.out.println("ss");
         }
     }
 

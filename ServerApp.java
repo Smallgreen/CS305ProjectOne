@@ -38,9 +38,9 @@ public class ServerApp
             }
             else{
                 System.out.println( str );
-//                String line = "received";
-//                byteArray = line.getBytes();
-//                transportLayer.send( byteArray );
+                String line = "received";
+                byteArray = line.getBytes();
+                transportLayer.send( byteArray );
             }
 
         }
