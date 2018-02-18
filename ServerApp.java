@@ -29,6 +29,7 @@ public class ServerApp
             if(byteArray==null)
                 break;
             String str = new String ( byteArray );
+            System.out.println("the received string from server is " + str);
 
 
 
