@@ -16,6 +16,8 @@ public class TransportLayer
 
             //build TCP connection
             send(SYN.getBytes());
+
+            System.out.println("ss");
         }
     }
 
@@ -25,13 +27,18 @@ public class TransportLayer
 
     public void send(byte[] payload)
     {
-        if(isPersistent) {
-            networkLayer.send(payload);
-        }
-        else{
+        if(!isPersistent){
             networkLayer.send(SYN.getBytes());
-            networkLayer.send(payload);
         }
+
+        networkLayer.send(payload);
+//        if(isPersistent) {
+//            networkLayer.send(payload);
+//        }
+//        else{
+//            networkLayer.send(SYN.getBytes());
+//            networkLayer.send(payload);
+//        }
     }
 
     public byte[] receive()
