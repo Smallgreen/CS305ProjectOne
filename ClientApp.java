@@ -33,8 +33,11 @@ public class ClientApp
             byte[] byteArray = line.getBytes();
             transportLayer.send( byteArray );
             byteArray = transportLayer.receive();
+
             String str = new String ( byteArray );
+            if(!str.equals("acknowledged")){
             System.out.println( str );
+            }
             //read next line
             line = reader.readLine();
         }
