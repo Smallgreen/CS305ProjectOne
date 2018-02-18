@@ -11,7 +11,7 @@ public class ClientApp
 
     public static void main(String[] args) throws Exception
     {
-        boolean persistent = false;
+        persistent = false;
         double httpVersion = Double.parseDouble(args[0]);
 
         if(httpVersion == 1.0){
