@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 
 //This class represents the server application
 public class ServerApp
@@ -28,6 +30,8 @@ public class ServerApp
                 break;
             String str = new String ( byteArray );
 
+
+
             if(str.equals("hello")){
 
                 String line = "acknowledged";
@@ -36,10 +40,25 @@ public class ServerApp
                 transportLayer.send( byteArray );
             }
             else{
-                System.out.println( str );
-                String line = "received";
-                byteArray = line.getBytes();
-                transportLayer.send( byteArray );
+                //tiaoguo http
+                //link img
+
+                //*** img image_name ***
+                //*** href file_name text_to_display ***
+                String[] request = str.split("\\s+");
+                //if html
+                if(request[0].equals("***")){
+                    String fileName = request[2];
+                    File f = new File("./server_mem/" + fileName);
+                    byteArray = Files.readAllBytes(f.toPath());
+                    transportLayer.send(byteArray);
+                }
+                else{
+                    System.out.println( str );
+                    String line = "received";
+                    byteArray = line.getBytes();
+                    transportLayer.send( byteArray );
+                }
             }
 
         }

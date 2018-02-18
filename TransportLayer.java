@@ -15,8 +15,10 @@ public class TransportLayer
         if(!server) {
             checkPersistent();
 
-            //build TCP connection
-            send(SYN.getBytes());
+            if(isPersistent) {
+                //build TCP connection
+                send(SYN.getBytes());
+            }
         }
     }
 

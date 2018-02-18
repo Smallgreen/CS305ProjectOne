@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 //This class represents the client application
 public class ClientApp
 {
-
-
     public static boolean persistent;
 
     public static void main(String[] args) throws Exception
@@ -31,6 +29,8 @@ public class ClientApp
         {
             //convert lines into byte array, send to transoport layer and wait for response
             byte[] byteArray = line.getBytes();
+
+
             transportLayer.send( byteArray );
             byteArray = transportLayer.receive();
 
