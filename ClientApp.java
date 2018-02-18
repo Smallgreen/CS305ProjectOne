@@ -18,11 +18,13 @@ public class ClientApp
             persistent = true;
         }
 
+        TransportLayer transportLayer = new TransportLayer(false, 0,0);
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
 
         //create a new transport layer for client (hence false) (connect to server), and read in first line from keyboard
-        TransportLayer transportLayer = new TransportLayer(false, 0,0);
+
 
         //while line is not empty
         while( line != null && !line.equals("") )

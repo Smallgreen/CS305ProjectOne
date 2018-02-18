@@ -30,15 +30,17 @@ public class ServerApp
             System.out.println("the received string from server is " + str);
 
             if(str.equals("hello")){
+
                 String line = "acknowledged";
+                System.out.println(line);
                 byteArray = line.getBytes();
                 transportLayer.send( byteArray );
             }
             else{
                 System.out.println( str );
-                String line = "received";
-                byteArray = line.getBytes();
-                transportLayer.send( byteArray );
+//                String line = "received";
+//                byteArray = line.getBytes();
+//                transportLayer.send( byteArray );
             }
 
         }
