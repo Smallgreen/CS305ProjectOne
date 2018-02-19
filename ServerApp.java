@@ -29,9 +29,6 @@ public class ServerApp
             if(byteArray==null)
                 break;
             String str = new String ( byteArray );
-            System.out.println("the received string from server is " + str);
-
-
 
             if(str.equals("hello")){
 
@@ -56,8 +53,8 @@ public class ServerApp
                 }
                 else{
                     System.out.println( str );
-                    String line = "received";
-                    byteArray = line.getBytes();
+                    //String line = "received";
+                    //byteArray = line.getBytes();
                     transportLayer.send( byteArray );
                 }
             }

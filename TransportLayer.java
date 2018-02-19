@@ -18,6 +18,7 @@ public class TransportLayer
             if(isPersistent) {
                 //build TCP connection
                 send(SYN.getBytes());
+                receive();
             }
         }
     }
@@ -30,6 +31,7 @@ public class TransportLayer
     {
         if(!isPersistent && !isServer){
             networkLayer.send(SYN.getBytes());
+            receive();
         }
 
         networkLayer.send(payload);
