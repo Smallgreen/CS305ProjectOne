@@ -27,8 +27,17 @@ public class ClientApp
         //while line is not empty
         while( line != null && !line.equals("") )
         {
+            HTTP request;
+            String[] parseLine = line.split("\\s+");
+
+            if(parseLine[0].equals("***")){
+                request = new HTTP(true,"GET",httpVersion,parseLine[2]);
+            }else{
+                request = new HTTP(true,"TEXT", httpVersion,line);
+            }
+
             //convert lines into byte array, send to transoport layer and wait for response
-            byte[] byteArray = line.getBytes();
+            byte[] byteArray = request.getRequest().getBytes();
 
 
             transportLayer.send( byteArray );
@@ -42,6 +51,7 @@ public class ClientApp
             line = reader.readLine();
         }
     }
+
     
 
 }

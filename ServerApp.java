@@ -38,25 +38,23 @@ public class ServerApp
                 transportLayer.send( byteArray );
             }
             else{
-                //tiaoguo http
-                //link img
-
-                //*** img image_name ***
-                //*** href file_name text_to_display ***
+                HTTP response = new HTTP(false,)
                 String[] request = str.split("\\s+");
                 //if html
-                if(request[0].equals("***")){
-                    String fileName = request[2];
+                if(request[0].equals("GET")){
+                    String fileName = request[1];
                     File f = new File("./server_mem/" + fileName);
                     byteArray = Files.readAllBytes(f.toPath());
                     transportLayer.send(byteArray);
                 }
                 else{
-                    System.out.println( str );
+                    //System.out.println(request[1]);
                     //String line = "received";
-                    //byteArray = line.getBytes();
+                    byteArray = request[1].getBytes();
                     transportLayer.send( byteArray );
                 }
+
+
             }
 
         }
