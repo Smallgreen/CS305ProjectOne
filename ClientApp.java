@@ -18,6 +18,8 @@ public class ClientApp
 
         TransportLayer transportLayer = new TransportLayer(false, 0,0);
 
+        //initiate cache, new folder, new file when receive
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
 
@@ -42,11 +44,13 @@ public class ClientApp
 
             transportLayer.send( byteArray );
             byteArray = transportLayer.receive();
+            //new arrlist
+
 
             String str = new String ( byteArray );
-            if(!str.equals("acknowledged")){
+
             System.out.println( str );
-            }
+
             //read next line
             line = reader.readLine();
         }
