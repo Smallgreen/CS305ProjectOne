@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 //This class represents the server application
 public class ServerApp
@@ -9,6 +10,23 @@ public class ServerApp
 
     public static void main(String[] args) throws Exception
     {
+
+        ArrayList<String> fileList = new ArrayList<>();
+        fileList.add("animals_logo.art");
+        fileList.add("animals.clht");
+        fileList.add("cat_logo.art");
+        fileList.add("cat.art");
+        fileList.add("cat.clht");
+        fileList.add("cat2.art");
+        fileList.add("cat3.art");
+        fileList.add("giraffe_logo.art");
+        fileList.add("giraffe.art");
+        fileList.add("giraffe.clht");
+        fileList.add("giraffe2.art");
+        fileList.add("gorilla_logo.art");
+        fileList.add("gorilla.art");
+        fileList.add("gorilla.clht");
+        fileList.add("gorilla2.art");
 
         System.out.println("Please enter propagation delay and transmission delay");
 
@@ -38,18 +56,17 @@ public class ServerApp
                 transportLayer.send( byteArray );
             }
             else{
-                HTTP response = new HTTP(false,)
+                HTTP response;
                 String[] request = str.split("\\s+");
                 //if html
-                if(request[0].equals("GET")){
+                if(request[0].equals("GET") && fileList.contains(request[1])){
                     String fileName = request[1];
                     File f = new File("./server_mem/" + fileName);
                     byteArray = Files.readAllBytes(f.toPath());
-                    transportLayer.send(byteArray);
+                    response = new HTTP(false,"200",Double.parseDouble(request[2]),byteArray.toString());
+                    transportLayer.send(response.getResponse().getBytes());
                 }
                 else{
-                    //System.out.println(request[1]);
-                    //String line = "received";
                     byteArray = request[1].getBytes();
                     transportLayer.send( byteArray );
                 }
