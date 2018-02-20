@@ -59,29 +59,30 @@ public class ServerApp
                 HTTP response;
                 String[] request = str.split("\\s+");
                 //if html
+                boolean isModified = Boolean.parseBoolean(request[3]);
                 if(request[0].equals("GET")){
-                    boolean isModified = Boolean.parseBoolean(request[3]);
+
                     if(!isModified) {
                         if(fileList.contains(request[1])){
                         String fileName = request[1];
                         File f = new File("./server_mem/" + fileName);
                         byteArray = Files.readAllBytes(f.toPath());
-                        response = new HTTP(false, "200", Double.parseDouble(request[2]), byteArray.toString(), isModified);
+                        response = new HTTP(false, "200", Double.parseDouble(request[2]), new String(byteArray), isModified);
                         transportLayer.send(response.getResponse().getBytes());
                     }
                     else{
-                        response = new HTTP(false,"404",Double.parseDouble(request[2]),"NOT FOUND", isModified));
+                        response = new HTTP(false,"404",Double.parseDouble(request[2]),"NOT FOUND", isModified);
                         transportLayer.send(response.getResponse().getBytes());
                     }
                     }
                     else{
                         //cache, if not modify; server, if modify
-                        response = new HTTP(false,"304",Double.parseDouble(request[2]),"NOT MODIFIED", isModified));
+                        response = new HTTP(false,"304",Double.parseDouble(request[2]),"NOT MODIFIED", isModified);
                         transportLayer.send(response.getResponse().getBytes());
                     }
                 }
                 else{
-                    response = new HTTP(false,"200",Double.parseDouble(request[2]),request[1]);
+                    response = new HTTP(false,"200",Double.parseDouble(request[2]),request[1],isModified);
                     transportLayer.send(response.getResponse().getBytes());
                 }
 

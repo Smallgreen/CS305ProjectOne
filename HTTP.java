@@ -19,6 +19,6 @@ public class HTTP {
     }
 
     public String getResponse(){
-        return function + " " + html + " " + version + " " + isModified;
+        return function + "," + html + "," + version + "," + isModified;
     }
 }
