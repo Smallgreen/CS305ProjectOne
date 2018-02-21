@@ -38,6 +38,11 @@ public class ServerApp
         //create a new transport layer for server (hence true) (wait for client)
         TransportLayer transportLayer = new TransportLayer(true, prop_delay, trans_delay);
 
+        String logPath = "./serverLog";
+        File logDirect = new File(logPath);
+        if (! logDirect.exists()){
+            logDirect.mkdir();
+        }
 
         while( true )
         {

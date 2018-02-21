@@ -33,6 +33,11 @@ public class ClientApp
         if (! directory.exists()){
             directory.mkdir();
         }
+        String logPath = "./localLog";
+        File logDirect = new File(logPath);
+        if (! logDirect.exists()){
+            logDirect.mkdir();
+        }
 
         //store the list of file stored in local cache
         ArrayList<String> cacheList = new ArrayList<>();
@@ -162,9 +167,9 @@ public class ClientApp
     public static void storeInCache(ArrayList<String> cacheList, String fileName, String content){
 
 
-        cacheList.add(fileName);
-        //File file = new File("./cache/"+fileName);
-
+        if(!cacheList.contains(fileName)){
+            cacheList.add(fileName);
+        }
 
         try {
             BufferedWriter file = new BufferedWriter(new FileWriter("./cache/"+fileName));
