@@ -45,7 +45,7 @@ public class ClientApp
             String str = new String ( byteArray );
             //System.out.println(str);
 
-            String[] dataSplit = str.split(",,");
+            String[] dataSplit = str.split(",,,");
             String[] content = dataSplit[1].split("\\r?\\n");
 
 
@@ -57,21 +57,20 @@ public class ClientApp
             }
 
             //boolean isText = false;
+            ArrayList<String> index = new ArrayList<>();
             int indexPage = 0;
             for(int i = 0;i<webpage.size();i++){
-                indexPage++;
-                //isText = false;
                 HTTP requestEmbeded;
                 String[] parseLineEmbeded = webpage.get(i).split("\\s+");
                 //System.out.println("client get "+webpage.get(i));
 
                 if(parseLineEmbeded[0].equals("***")){
-                    if(parseLineEmbeded[0].contains("clht")){
-//                        String[] getName = parseLineEmbeded[0].split("\\s+");
-//                        String[] getWebName = getName[1].split(".");
-//                        System.out.println(indexPage + ". aaaa" + getWebName[0]);
+                    if(parseLineEmbeded[1].equals("href")){
+                        indexPage++;
+                        index.add(webpage.get(i));
+                        System.out.println(indexPage + ". " + parseLineEmbeded[3]);
                         continue;
-                        //put into another arr list wait for input index
+
                     }
                     else {
                         requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], false);
@@ -93,7 +92,7 @@ public class ClientApp
                 String strEmbeded = new String ( byteArrayEmbeded );
 
 
-                    String[] response = strEmbeded.split(",,");
+                    String[] response = strEmbeded.split(",,,");
                     //you wen ti
                     System.out.println(response[1]);
 
