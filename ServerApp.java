@@ -57,7 +57,7 @@ public class ServerApp
             }
             else{
                 HTTP response;
-                String[] request = str.split(",,");
+                String[] request = str.split(",,,");
                 //if html
                 boolean isModified = Boolean.parseBoolean(request[3]);
                 //System.out.println("test server "+request[1]);
