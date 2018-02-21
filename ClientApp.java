@@ -1,5 +1,5 @@
 
-
+import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -21,6 +21,12 @@ public class ClientApp
         TransportLayer transportLayer = new TransportLayer(false, 0,0);
 
         //initiate cache, new folder, new file when receive
+
+        String PATH = "./cache";
+        File directory = new File(PATH);
+        if (! directory.exists()){
+            directory.mkdir();
+        }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
@@ -98,7 +104,6 @@ public class ClientApp
 
 
                     String[] response = strEmbeded.split("@");
-                    //you wen ti
                     System.out.println(response[1]);
 
 
@@ -111,6 +116,9 @@ public class ClientApp
             //read next line
             line = reader.readLine();
 
+            if(line == null || line.equals("") ){
+                break;
+            }
             line = index.get(Integer.parseInt(line)-1);
             webpage.clear();
             index.clear();
