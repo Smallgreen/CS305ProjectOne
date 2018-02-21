@@ -147,7 +147,7 @@ public class ClientApp
                 line = index.get(Integer.parseInt(line)-1);
             }
             else{
-                line = index.get(experArr[experCnt]);
+                line = index.get(experArr[experCnt] - 1);
                 System.out.println("expe" + experArr[experCnt]);
                 if(experCnt == experArr.length - 1){
                     break;
