@@ -84,9 +84,8 @@ public class ClientApp
 
             ArrayList<String> webpage = new ArrayList<>();
             for(int i=0;i<content.length;i++){
-                if(content[i].length() != 0) {
+                if(content[i].length() != 0 && !content[i].trim().isEmpty()) {
                     webpage.add(content[i]);
-
                 }
             }
 
