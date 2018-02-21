@@ -1,8 +1,11 @@
 
 import java.io.File;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 //This class represents the client application
 public class ClientApp
@@ -27,6 +30,9 @@ public class ClientApp
         if (! directory.exists()){
             directory.mkdir();
         }
+
+        //store the list of file stored in local cache
+        ArrayList<String> cacheList = new ArrayList<>();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
@@ -54,8 +60,11 @@ public class ClientApp
             //System.out.println("the str received!!!!!   " + str);
 
             String[] dataSplit = str.split("@");
+
+            storeInCache(cacheList, parseLine[2], dataSplit[1]);
+
             String[] content = dataSplit[1].split("\\r?\\n");
-           System.out.println("data split: "+dataSplit[1]);
+           //System.out.println("data split: "+dataSplit[1]);
 //            System.out.println("length: "+content.length);
 
             ArrayList<String> webpage = new ArrayList<>();
@@ -123,6 +132,26 @@ public class ClientApp
             webpage.clear();
             index.clear();
         }
+    }
+
+    public static void storeInCache(ArrayList<String> cacheList, String fileName, String content){
+
+
+        cacheList.add(fileName);
+        //File file = new File("./cache/"+fileName);
+
+
+        try {
+            BufferedWriter file = new BufferedWriter(new FileWriter("./cache/"+fileName));
+            file.write(content);
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
     }
 
     
