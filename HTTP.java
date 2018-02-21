@@ -16,13 +16,13 @@ public class HTTP {
 
     public String getRequest(){
         //System.out.println("req "+html);
-        return function + ",,," + version + ",,," + html + ",,,"+ isModified;
+        return function + "@" + version + "@" + html + "@"+ isModified;
 
     }
 
     public String getResponse(){
         //System.out.println("resp "+html);
-        return function + ",,," + html + ",,," + version + ",,," + isModified;
+        return function + "@" + html + "@" + version + "@" + isModified;
 
     }
 }

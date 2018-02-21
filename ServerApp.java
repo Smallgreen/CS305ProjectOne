@@ -57,12 +57,13 @@ public class ServerApp
             }
             else{
                 HTTP response;
-                String[] request = str.split(",,,");
+                String[] request = str.split("@");
                 //if html
                 boolean isModified = Boolean.parseBoolean(request[3]);
                 //System.out.println("test server "+request[1]);
                 if(request[0].equals("GET")){
                     if(!isModified) {
+                        System.out.println("11111111");
                         if(fileList.contains(request[2])){
                         String fileName = request[2];
                         File f = new File("./server_mem/" + fileName);
@@ -72,18 +73,20 @@ public class ServerApp
 
                     }
                     else{
+                            System.out.println("22222222");
                         response = new HTTP(false,"404",Double.parseDouble(request[1]),"NOT FOUND", isModified);
                         transportLayer.send(response.getResponse().getBytes());
                     }
                     }
                     else{
+                        System.out.println("3333333");
                         //cache, if not modify; server, if modify
                         response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", isModified);
                         transportLayer.send(response.getResponse().getBytes());
                     }
                 }
                 else{
-                    //System.out.println("text "+ request[2]);
+                    System.out.println("4444444");
                     response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],isModified);
 
                     transportLayer.send(response.getResponse().getBytes());

@@ -1,4 +1,5 @@
 
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -43,16 +44,19 @@ public class ClientApp
             transportLayer.send( byteArray );
             byteArray = transportLayer.receive();
             String str = new String ( byteArray );
-            //System.out.println(str);
 
-            String[] dataSplit = str.split(",,,");
+            //System.out.println("the str received!!!!!   " + str);
+
+            String[] dataSplit = str.split("@");
             String[] content = dataSplit[1].split("\\r?\\n");
-
+           System.out.println("data split: "+dataSplit[1]);
+//            System.out.println("length: "+content.length);
 
             ArrayList<String> webpage = new ArrayList<>();
             for(int i=0;i<content.length;i++){
                 if(content[i].length() != 0) {
                     webpage.add(content[i]);
+
                 }
             }
 
@@ -77,6 +81,7 @@ public class ClientApp
                     }
 
                 }else{
+                    //WTFFF
                     //isText = true;
                     requestEmbeded = new HTTP(true,"TEXT", httpVersion,webpage.get(i),false);
                     //System.out.println("html "+parseLine[2]);
@@ -92,17 +97,23 @@ public class ClientApp
                 String strEmbeded = new String ( byteArrayEmbeded );
 
 
-                    String[] response = strEmbeded.split(",,,");
+                    String[] response = strEmbeded.split("@");
                     //you wen ti
                     System.out.println(response[1]);
 
 
             }
+            System.out.println("Please enter the page number you would like to view: ");
+
 
 
 
             //read next line
             line = reader.readLine();
+
+            line = index.get(Integer.parseInt(line)-1);
+            webpage.clear();
+            index.clear();
         }
     }
 
