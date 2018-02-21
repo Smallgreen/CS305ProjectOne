@@ -57,32 +57,35 @@ public class ServerApp
             }
             else{
                 HTTP response;
-                String[] request = str.split("\\s+");
+                String[] request = str.split(",,");
                 //if html
                 boolean isModified = Boolean.parseBoolean(request[3]);
+                //System.out.println("test server "+request[1]);
                 if(request[0].equals("GET")){
-
                     if(!isModified) {
-                        if(fileList.contains(request[1])){
-                        String fileName = request[1];
+                        if(fileList.contains(request[2])){
+                        String fileName = request[2];
                         File f = new File("./server_mem/" + fileName);
                         byteArray = Files.readAllBytes(f.toPath());
-                        response = new HTTP(false, "200", Double.parseDouble(request[2]), new String(byteArray), isModified);
+                        response = new HTTP(false, "200", Double.parseDouble(request[1]), new String(byteArray), isModified);
                         transportLayer.send(response.getResponse().getBytes());
+
                     }
                     else{
-                        response = new HTTP(false,"404",Double.parseDouble(request[2]),"NOT FOUND", isModified);
+                        response = new HTTP(false,"404",Double.parseDouble(request[1]),"NOT FOUND", isModified);
                         transportLayer.send(response.getResponse().getBytes());
                     }
                     }
                     else{
                         //cache, if not modify; server, if modify
-                        response = new HTTP(false,"304",Double.parseDouble(request[2]),"NOT MODIFIED", isModified);
+                        response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", isModified);
                         transportLayer.send(response.getResponse().getBytes());
                     }
                 }
                 else{
-                    response = new HTTP(false,"200",Double.parseDouble(request[2]),request[1],isModified);
+                    //System.out.println("text "+ request[2]);
+                    response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],isModified);
+
                     transportLayer.send(response.getResponse().getBytes());
                 }
 

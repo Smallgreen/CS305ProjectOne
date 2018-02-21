@@ -15,10 +15,14 @@ public class HTTP {
     }
 
     public String getRequest(){
-        return function + " " +  html + " " + version + " "+ isModified;
+        //System.out.println("req "+html);
+        return function + ",," + version + ",," + html + ",,"+ isModified;
+
     }
 
     public String getResponse(){
-        return function + "," + html + "," + version + "," + isModified;
+        //System.out.println("resp "+html);
+        return function + ",," + html + ",," + version + ",," + isModified;
+
     }
 }

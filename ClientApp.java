@@ -45,7 +45,7 @@ public class ClientApp
             String str = new String ( byteArray );
             //System.out.println(str);
 
-            String[] dataSplit = str.split(",");
+            String[] dataSplit = str.split(",,");
             String[] content = dataSplit[1].split("\\r?\\n");
 
 
@@ -55,24 +55,49 @@ public class ClientApp
                     webpage.add(content[i]);
                 }
             }
+
+            //boolean isText = false;
+            int indexPage = 0;
             for(int i = 0;i<webpage.size();i++){
+                indexPage++;
+                //isText = false;
                 HTTP requestEmbeded;
                 String[] parseLineEmbeded = webpage.get(i).split("\\s+");
-                System.out.println(webpage.get(i));
+                //System.out.println("client get "+webpage.get(i));
 
                 if(parseLineEmbeded[0].equals("***")){
-                    requestEmbeded = new HTTP(true,"GET",httpVersion,parseLine[2],false);
+                    if(parseLineEmbeded[0].contains("clht")){
+//                        String[] getName = parseLineEmbeded[0].split("\\s+");
+//                        String[] getWebName = getName[1].split(".");
+//                        System.out.println(indexPage + ". aaaa" + getWebName[0]);
+                        continue;
+                        //put into another arr list wait for input index
+                    }
+                    else {
+                        requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], false);
+                    }
+
                 }else{
-                    requestEmbeded = new HTTP(true,"TEXT", httpVersion,line,false);
+                    //isText = true;
+                    requestEmbeded = new HTTP(true,"TEXT", httpVersion,webpage.get(i),false);
+                    //System.out.println("html "+parseLine[2]);
                 }
 
                 byte[] byteArrayEmbeded = requestEmbeded.getRequest().getBytes();
 
 
                 transportLayer.send( byteArrayEmbeded );
+                //System.out.println(new String(byteArrayEmbeded));
                 byteArrayEmbeded = transportLayer.receive();
+
                 String strEmbeded = new String ( byteArrayEmbeded );
-                //System.out.println(strEmbeded);
+
+
+                    String[] response = strEmbeded.split(",,");
+                    //you wen ti
+                    System.out.println(response[1]);
+
+
             }
 
 
