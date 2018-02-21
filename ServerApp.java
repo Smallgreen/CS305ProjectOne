@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
@@ -40,6 +38,11 @@ public class ServerApp
         //create a new transport layer for server (hence true) (wait for client)
         TransportLayer transportLayer = new TransportLayer(true, prop_delay, trans_delay);
 
+        String logPath = "./serverLog";
+        File logDirect = new File(logPath);
+        if (! logDirect.exists()){
+            logDirect.mkdir();
+        }
 
         while( true )
         {
@@ -102,6 +105,15 @@ public class ServerApp
 
             }
 
+        }
+
+        //System.out.println("delay: "+delayCnt);
+        try {
+            BufferedWriter file = new BufferedWriter(new FileWriter("./result"));
+            file.write("prop delay: "+prop_delay+"\n"+"trans delay: "+trans_delay+"\n"+"total delay: "+ delayCnt*(prop_delay + trans_delay));
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

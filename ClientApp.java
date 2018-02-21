@@ -33,6 +33,11 @@ public class ClientApp
         if (! directory.exists()){
             directory.mkdir();
         }
+        String logPath = "./localLog";
+        File logDirect = new File(logPath);
+        if (! logDirect.exists()){
+            logDirect.mkdir();
+        }
 
         //store the list of file stored in local cache
         ArrayList<String> cacheList = new ArrayList<>();
@@ -146,7 +151,7 @@ public class ClientApp
                 line = index.get(Integer.parseInt(line)-1);
             }
             else{
-                line = index.get(experArr[experCnt]);
+                line = index.get(experArr[experCnt] - 1);
                 System.out.println("expe" + experArr[experCnt]);
                 if(experCnt == experArr.length - 1){
                     break;
@@ -161,9 +166,9 @@ public class ClientApp
     public static void storeInCache(ArrayList<String> cacheList, String fileName, String content){
 
 
-        cacheList.add(fileName);
-        //File file = new File("./cache/"+fileName);
-
+        if(!cacheList.contains(fileName)){
+            cacheList.add(fileName);
+        }
 
         try {
             BufferedWriter file = new BufferedWriter(new FileWriter("./cache/"+fileName));
