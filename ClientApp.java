@@ -11,6 +11,9 @@ import java.io.FileWriter;
 public class ClientApp
 {
     public static boolean persistent;
+    public static boolean isExperi;
+    public static int experCnt = 0;
+    private static int[] experArr = {1, 1, 3, 1};//1, 1, 2, 1, 3, 1
 
     public static void main(String[] args) throws Exception
     {
@@ -34,12 +37,24 @@ public class ClientApp
         //store the list of file stored in local cache
         ArrayList<String> cacheList = new ArrayList<>();
 
+        System.out.println("Select mode: interactive / experiment");
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
+
+        if(line.equals("interactive")){
+            isExperi = false;
+        }
+        else{
+            isExperi = true;
+        }
+
+        line = reader.readLine();
 
         //while line is not empty
         while( line != null && !line.equals("") )
         {
+
             HTTP request;
             String[] parseLine = line.split("\\s+");
 
@@ -61,7 +76,7 @@ public class ClientApp
 
             String[] dataSplit = str.split("@");
 
-            storeInCache(cacheList, parseLine[2], dataSplit[1]);
+            //storeInCache(cacheList, parseLine[2], dataSplit[1]);
 
             String[] content = dataSplit[1].split("\\r?\\n");
            //System.out.println("data split: "+dataSplit[1]);
@@ -87,7 +102,9 @@ public class ClientApp
                     if(parseLineEmbeded[1].equals("href")){
                         indexPage++;
                         index.add(webpage.get(i));
-                        System.out.println(indexPage + ". " + parseLineEmbeded[3]);
+                        if(!isExperi){
+                            System.out.println(indexPage + ". " + parseLineEmbeded[3]);
+                        }
                         continue;
 
                     }
@@ -113,24 +130,32 @@ public class ClientApp
 
 
                     String[] response = strEmbeded.split("@");
-                    System.out.println(response[1]);
+                    if(!isExperi){
+                        System.out.println(response[1]);
+                    }
 
 
             }
-            System.out.println("Please enter the page number you would like to view: ");
+            if(!isExperi){
+                System.out.println("Please enter the page number you would like to view: ");
+                //read next line
+                line = reader.readLine();
 
-
-
-
-            //read next line
-            line = reader.readLine();
-
-            if(line == null || line.equals("") ){
-                break;
+                if(line == null || line.equals("") ){
+                    break;
+                }
+                line = index.get(Integer.parseInt(line)-1);
             }
-            line = index.get(Integer.parseInt(line)-1);
-            webpage.clear();
-            index.clear();
+            else{
+                line = index.get(experArr[experCnt]);
+                System.out.println("expe" + experArr[experCnt]);
+                if(experCnt == experArr.length - 1){
+                    break;
+                }
+                experCnt++;
+            }
+//            webpage.clear();
+//            index.clear();
         }
     }
 

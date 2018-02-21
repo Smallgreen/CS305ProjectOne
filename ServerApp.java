@@ -35,9 +35,11 @@ public class ServerApp
         String[] delays = readin.split("\\s+");
         int prop_delay = Integer.parseInt(delays[0]);
         int trans_delay = Integer.parseInt(delays[1]);
+        int delayCnt = 0;
 
         //create a new transport layer for server (hence true) (wait for client)
         TransportLayer transportLayer = new TransportLayer(true, prop_delay, trans_delay);
+
 
         while( true )
         {
@@ -54,6 +56,7 @@ public class ServerApp
                 System.out.println(line);
                 byteArray = line.getBytes();
                 transportLayer.send( byteArray );
+                delayCnt++;
             }
             else{
                 HTTP response;
@@ -63,33 +66,37 @@ public class ServerApp
                 //System.out.println("test server "+request[1]);
                 if(request[0].equals("GET")){
                     if(!isModified) {
-                        System.out.println("11111111");
+                        //System.out.println("11111111");
                         if(fileList.contains(request[2])){
                         String fileName = request[2];
                         File f = new File("./server_mem/" + fileName);
                         byteArray = Files.readAllBytes(f.toPath());
                         response = new HTTP(false, "200", Double.parseDouble(request[1]), new String(byteArray), isModified);
                         transportLayer.send(response.getResponse().getBytes());
+                        delayCnt++;
 
                     }
                     else{
-                            System.out.println("22222222");
+                           // System.out.println("22222222");
                         response = new HTTP(false,"404",Double.parseDouble(request[1]),"NOT FOUND", isModified);
                         transportLayer.send(response.getResponse().getBytes());
+                        delayCnt++;
                     }
                     }
                     else{
-                        System.out.println("3333333");
+                        //System.out.println("3333333");
                         //cache, if not modify; server, if modify
                         response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", isModified);
                         transportLayer.send(response.getResponse().getBytes());
+                        delayCnt++;
                     }
                 }
                 else{
-                    System.out.println("4444444");
+                    //System.out.println("4444444");
                     response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],isModified);
 
                     transportLayer.send(response.getResponse().getBytes());
+                    delayCnt++;
                 }
 
 

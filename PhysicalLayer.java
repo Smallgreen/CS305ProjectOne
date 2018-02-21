@@ -75,7 +75,7 @@ public class PhysicalLayer
         try
         {
             
-            byte[] bytes = new byte[2048];
+            byte[] bytes = new byte[4096];
             int numBytes = inputStream.read(bytes);
             if ( numBytes > 0)
             {
