@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -35,7 +36,7 @@ public class ClientApp
             directory.mkdir();
         }
 
-        Hashtable localCache = new Hashtable();
+        Hashtable<String, Integer> localCache = new Hashtable<String, Integer>();
 
         //map: name - date
         //map in server: read from log file
@@ -59,33 +60,84 @@ public class ClientApp
         line = reader.readLine();
 
         //while line is not empty
-        while( line != null && !line.equals("") )
-        {
+        while( line != null && !line.equals("") ) {
 
             HTTP request;
             String[] parseLine = line.split("\\s+");
+            byte[] byteArray;
+            String[] dataSplit;
+            String[] content;
 
-            if(parseLine[0].equals("***")){
-                request = new HTTP(true,"GET",httpVersion,parseLine[2],1);
-            }else{
-                request = new HTTP(true,"TEXT", httpVersion,line,1);
-            }
+            System.out.print("contains: "+ localCache.containsKey(parseLine[2]));
+
+            if (!localCache.containsKey(parseLine[2])) {
+                if (parseLine[0].equals("***")) {
+                    request = new HTTP(true, "GET", httpVersion, parseLine[2], 1);
+                } else {
+                    request = new HTTP(true, "TEXT", httpVersion, line, 1);
+                }
 
             //convert lines into byte array, send to transoport layer and wait for response
-            byte[] byteArray = request.getRequest().getBytes();
 
+            byteArray = request.getRequest().getBytes();
 
-            transportLayer.send( byteArray );
+            transportLayer.send(byteArray);
             byteArray = transportLayer.receive();
-            String str = new String ( byteArray );
+            String str = new String(byteArray);
 
-            //System.out.println("the str received!!!!!   " + str);
+            dataSplit = str.split("@");
 
-            String[] dataSplit = str.split("@");
+            System.out.println("currentKey: " + Integer.parseInt(dataSplit[3]));
 
-            //storeInCache(cacheList, parseLine[2], dataSplit[1]);
+            storeInCache(localCache, parseLine[2], dataSplit[1], Integer.parseInt(dataSplit[3]));
+            content = dataSplit[1].split("\\r?\\n");
+        }
+        else{
+               int date = localCache.get(parseLine[2]);
+                if (parseLine[0].equals("***")) {
+                    request = new HTTP(true, "GET", httpVersion, parseLine[2], date);
+                } else {
+                    request = new HTTP(true, "TEXT", httpVersion, line, date);
+                }
+                byteArray = request.getRequest().getBytes();
 
-            String[] content = dataSplit[1].split("\\r?\\n");
+                transportLayer.send(byteArray);
+                byteArray = transportLayer.receive();
+                String str = new String(byteArray);
+                dataSplit = str.split("@");
+
+                if(Integer.parseInt(dataSplit[0]) == 304){
+                    System.out.println("300004");
+                    File f = new File("./cache/" + parseLine[2]);
+                    byteArray = Files.readAllBytes(f.toPath());
+                    content = new String(byteArray).split("\\r?\\n");
+                }
+                else{
+
+                    if (parseLine[0].equals("***")) {
+                        request = new HTTP(true, "GET", httpVersion, parseLine[2], 1);
+                    } else {
+                        request = new HTTP(true, "TEXT", httpVersion, line, 1);
+                    }
+
+                    //convert lines into byte array, send to transoport layer and wait for response
+
+                    byteArray = request.getRequest().getBytes();
+
+                    transportLayer.send(byteArray);
+                    byteArray = transportLayer.receive();
+                    String str2 = new String(byteArray);
+
+                    dataSplit = str2.split("@");
+
+                    storeInCache(localCache, parseLine[2], dataSplit[1], Integer.parseInt(dataSplit[3]));
+                    content = dataSplit[1].split("\\r?\\n");
+                }
+
+            }
+
+            //get webpage list
+
            //System.out.println("data split: "+dataSplit[1]);
 //            System.out.println("length: "+content.length);
 
@@ -165,7 +217,7 @@ public class ClientApp
         }
     }
 
-    public static void storeInCache(Hashtable table, String fileName, int modified, String content){
+    public static void storeInCache(Hashtable<String, Integer> table, String fileName, String content, int modified){
     //store, put in hashmap, deal with modified date
         //before request http, search in cache, send date
 
@@ -180,6 +232,10 @@ public class ClientApp
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static void sendHelper(){
 
     }
 

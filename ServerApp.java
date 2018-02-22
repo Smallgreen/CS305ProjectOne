@@ -89,14 +89,14 @@ public class ServerApp
                         String fileName = request[2];
                         File f = new File("./server_mem/" + fileName);
                         byteArray = Files.readAllBytes(f.toPath());
-                        response = new HTTP(false, "200", Double.parseDouble(request[1]), new String(byteArray), isModified);
+                        response = new HTTP(false, "200", Double.parseDouble(request[1]), new String(byteArray), 0);
                         transportLayer.send(response.getResponse().getBytes());
                         delayCnt++;
 
                     }
                     else{
                            // System.out.println("22222222");
-                        response = new HTTP(false,"404",Double.parseDouble(request[1]),"NOT FOUND", isModified);
+                        response = new HTTP(false,"404",Double.parseDouble(request[1]),"NOT FOUND", 0);
                         transportLayer.send(response.getResponse().getBytes());
                         delayCnt++;
                     }
@@ -104,14 +104,14 @@ public class ServerApp
                     else{
                         System.out.println("304");
                         //cache, if not modify; server, if modify
-                        response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", isModified);
+                        response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", 0);
                         transportLayer.send(response.getResponse().getBytes());
                         delayCnt++;
                     }
                 }
                 else{
                     //System.out.println("4444444");
-                    response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],isModified);
+                    response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],0);
 
                     transportLayer.send(response.getResponse().getBytes());
                     delayCnt++;
