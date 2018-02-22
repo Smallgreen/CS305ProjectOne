@@ -54,17 +54,17 @@ public class ServerApp
                 System.out.println(line);
                 byteArray = line.getBytes();
                 transportLayer.send( byteArray );
-                delayCnt++;
+                delayCnt = delayCnt + 0.25;//present difference between ack and data
             }
             else{
                 HTTP response;
                 String[] request = str.split("@");
                 //if html
                 int isModified = Integer.parseInt(request[3]);
-                //System.out.println("test server "+request[1]);
+
                 if(request[0].equals("GET")){
                     if(isModified != 0) {
-                        //System.out.println("11111111");
+
                         if(serverCache.containsKey(request[2])){
                         String fileName = request[2];
                         File f = new File("./server_mem/" + fileName);
@@ -75,26 +75,23 @@ public class ServerApp
 
                     }
                     else{
-                           // System.out.println("22222222");
                         response = new HTTP(false,"404",Double.parseDouble(request[1]),"NOT FOUND", 0);
                         transportLayer.send(response.getResponse().getBytes());
-                        delayCnt++;
+                        delayCnt = delayCnt+0.25;
                     }
                     }
                     else{
-                        System.out.println("304");
                         //cache, if not modify; server, if modify
                         response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", 0);
                         transportLayer.send(response.getResponse().getBytes());
-                        delayCnt++;
+                        delayCnt = delayCnt+0.25;
                     }
                 }
                 else{
-                    //System.out.println("4444444");
                     response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],0);
 
                     transportLayer.send(response.getResponse().getBytes());
-                    delayCnt = delayCnt + 0.5;
+                    delayCnt++;
                 }
 
 
@@ -102,7 +99,6 @@ public class ServerApp
 
         }
 
-        //System.out.println("delay: "+delayCnt);
         try {
             BufferedWriter file = new BufferedWriter(new FileWriter("./result"));
             file.write("prop delay: "+prop_delay+"\n"+"trans delay: "+trans_delay+"\n"+"total delay: "+ delayCnt*(prop_delay + trans_delay));

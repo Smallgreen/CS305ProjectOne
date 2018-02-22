@@ -15,41 +15,37 @@ public class ClientApp
     public static boolean persistent;
     public static boolean isExperi;
     public static int experCnt = 0;
-    private static int[] experArr = {1, 1, 2, 1, 3, 1};//1, 1, 2, 1, 3, 1
+    private static int[] experArr = {1, 1, 2, 1, 3, 1}; //visit all the pages
 
     public static void main(String[] args) throws Exception
     {
         persistent = false;
         double httpVersion = Double.parseDouble(args[0]);
 
+        //http version: 1.0 persistent, 1,1 non
         if(httpVersion == 1.0){
             persistent = true;
         }
 
+        //initiate transport layer
         TransportLayer transportLayer = new TransportLayer(false, 0,0);
 
-        //initiate cache, new folder, new file when receive
-
+        //initiate cache folder
         String PATH = "./cache";
         File directory = new File(PATH);
         if (! directory.exists()){
             directory.mkdir();
         }
 
+        //local cache table, filename - date
         Hashtable<String, Integer> localCache = new Hashtable<String, Integer>();
-
-        //map: name - date
-        //map in server: read from log file
-        //map in client: fill with msg from server
-
-        //store the list of file stored in local cache
-        //ArrayList<String> cacheList = new ArrayList<>();
 
         System.out.println("Select mode: interactive / experiment");
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = reader.readLine();
 
+        //select mode
         if(line.equals("interactive")){
             isExperi = false;
         }
@@ -63,51 +59,58 @@ public class ClientApp
         while( line != null && !line.equals("") ) {
 
             HTTP request = new HTTP();
-            String[] parseLine = line.split("\\s+");
-            String[] content = null;
+            String[] parseLine = line.split("\\s+");//split the main page address by space
+            String[] content;
             String fileName = parseLine[2];
             String cmd = parseLine[0];
 
-            System.out.print("contains: "+ localCache.containsKey(parseLine[2]));
-
+            //send http request, save embeded files into arraylist and check cache
             content = sendHelper(localCache, fileName, cmd, request, httpVersion, transportLayer, line);
+            while(content == null){
+                System.out.println("please input website address again");
+                line = reader.readLine();
+                parseLine = line.split("\\s+");//split the main page address by space
+                fileName = parseLine[2];
+                cmd = parseLine[0];
+                content = sendHelper(localCache, fileName, cmd, request, httpVersion, transportLayer, line);
+            }
 
             //get webpage list
-
-           //System.out.println("data split: "+dataSplit[1]);
-//            System.out.println("length: "+content.length);
-
             ArrayList<String> webpage = new ArrayList<>();
             for(int i=0;i<content.length;i++){
                 if(content[i].length() != 0 && !content[i].trim().isEmpty()) {
                     webpage.add(content[i]);
-                    System.out.println("the returned" + content[i]);
                 }
             }
 
-            //boolean isText = false;
             ArrayList<String> index = new ArrayList<>();
             int indexPage = 0;
+
+            //load all files in current page
             for(int i = 0;i<webpage.size();i++){
                 HTTP requestEmbeded;
                 String[] parseLineEmbeded = webpage.get(i).split("\\s+");
-                //System.out.println("client get "+webpage.get(i));
 
                 if(parseLineEmbeded[0].equals("***")){
+                    //if it is link
                     if(parseLineEmbeded[1].equals("href")){
                         indexPage++;
                         index.add(webpage.get(i));
                         if(!isExperi){
+                            //show the links
                             System.out.println(indexPage + ". " + parseLineEmbeded[3]);
                         }
                         continue;
                     }
+                    //if it is img
                     else {
+                        //if it is not in local cache, send http request to get files from server
                         if (!localCache.containsKey(parseLineEmbeded[2])){
                             requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
                         }
                         else{
                             int date = localCache.get(parseLineEmbeded[2]);
+                            //check the date of last modified
                             requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], date);
                             byte[] byteArr = requestEmbeded.getRequest().getBytes();
                             transportLayer.send(byteArr);
@@ -115,8 +118,8 @@ public class ClientApp
                             String str = new String(byteArr);
                             String[] dataSplit = str.split("@");
 
+                            //if it did not modified, load from cache
                             if(Integer.parseInt(dataSplit[0]) == 304){
-
                                 File f = new File("./cache/" + parseLineEmbeded[2]);
                                 try {
                                     byteArr = Files.readAllBytes(f.toPath());
@@ -127,6 +130,7 @@ public class ClientApp
                                 continue;
                             }
                             else{
+                                //if it is modified, request from server again
                                 requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
                                 localCache.remove(parseLineEmbeded[2]);
                             }
@@ -136,33 +140,34 @@ public class ClientApp
                     }
 
                 }else{
-                    //isText = true;
+                    //if it is text
                     requestEmbeded = new HTTP(true,"TEXT", httpVersion,webpage.get(i),1);
-                    //System.out.println("html "+parseLine[2]);
                 }
 
                 byte[] byteArrayEmbeded = requestEmbeded.getRequest().getBytes();
-
-
                 transportLayer.send( byteArrayEmbeded );
-                //System.out.println(new String(byteArrayEmbeded));
                 byteArrayEmbeded = transportLayer.receive();
 
                 String strEmbeded = new String ( byteArrayEmbeded );
+                String[] response = strEmbeded.split("@");
 
-
-                    String[] response = strEmbeded.split("@");
-
+                if(Integer.parseInt(response[0]) == 200){
+                    //saving to local cache
                     if(!localCache.containsKey(parseLineEmbeded[2])){
                         storeInCache(localCache, parseLineEmbeded[2], response[1], Integer.parseInt(response[3]));
                     }
-
                     if(!isExperi){
                         System.out.println(response[1]);
                     }
-
+                }
+                else{
+                    if(!isExperi){
+                        System.out.println(response[0]);
+                    }
+                }
 
             }
+
             if(!isExperi){
                 System.out.println("Please enter the page number you would like to view: ");
                 //read next line
@@ -181,14 +186,10 @@ public class ClientApp
                 }
                 experCnt++;
             }
-//            webpage.clear();
-//            index.clear();
         }
     }
 
     public static void storeInCache(Hashtable<String, Integer> table, String fileName, String content, int modified){
-    //store, put in hashmap, deal with modified date
-        //before request http, search in cache, send date
 
         if(!table.contains(fileName)){
             table.put(fileName, modified);
@@ -228,11 +229,15 @@ public class ClientApp
 
             dataSplit = str.split("@");
 
-            System.out.println("currentKey: " + Integer.parseInt(dataSplit[3]));
+            if(Integer.parseInt(dataSplit[0]) == 200 ){
 
-            storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
-            System.out.print("11111");
-            content = dataSplit[1].split("\\r?\\n");
+                storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
+                content = dataSplit[1].split("\\r?\\n");
+            }
+                else {
+                    System.out.println(dataSplit[0]);
+                    content = null;
+            }
         }
         else{
             int date = localCache.get(fileName);
@@ -246,23 +251,21 @@ public class ClientApp
             transportLayer.send(byteArray);
             byteArray = transportLayer.receive();
             String str = new String(byteArray);
-            System.out.println("the received response: " + str);
+
             dataSplit = str.split("@");
 
             if(Integer.parseInt(dataSplit[0]) == 304){
-                System.out.println("300004");
+
                 File f = new File("./cache/" + fileName);
-                System.out.print("file name is " + fileName);
+
                 try {
                     byteArray = Files.readAllBytes(f.toPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.print("22222");
+
                 content = new String(byteArray).split("\\r?\\n");
-                System.out.println("content 1 : " + content[0]);
-                System.out.println("content 2 : " + content[1]);
-                System.out.println("content 3 : " + content[2]);
+
             }
             else{
 
@@ -283,7 +286,6 @@ public class ClientApp
                 dataSplit = str2.split("@");
 
                 storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
-                System.out.print("333333");
                 content = dataSplit[1].split("\\r?\\n");
             }
 
@@ -292,8 +294,5 @@ public class ClientApp
         return content;
 
     }
-
-
-    
 
 }
