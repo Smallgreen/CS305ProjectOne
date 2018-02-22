@@ -27,25 +27,25 @@ public class ServerApp
         serverCache.put("gorilla.clht", 0);
         serverCache.put("gorilla2.art", 0);
 
-
-
-
-        ArrayList<String> fileList = new ArrayList<>();
-        fileList.add("animals_logo.art");
-        fileList.add("animals.clht");
-        fileList.add("cat_logo.art");
-        fileList.add("cat.art");
-        fileList.add("cat.clht");
-        fileList.add("cat2.art");
-        fileList.add("cat3.art");
-        fileList.add("giraffe_logo.art");
-        fileList.add("giraffe.art");
-        fileList.add("giraffe.clht");
-        fileList.add("giraffe2.art");
-        fileList.add("gorilla_logo.art");
-        fileList.add("gorilla.art");
-        fileList.add("gorilla.clht");
-        fileList.add("gorilla2.art");
+//
+//
+//
+//        ArrayList<String> fileList = new ArrayList<>();
+//        fileList.add("animals_logo.art");
+//        fileList.add("animals.clht");
+//        fileList.add("cat_logo.art");
+//        fileList.add("cat.art");
+//        fileList.add("cat.clht");
+//        fileList.add("cat2.art");
+//        fileList.add("cat3.art");
+//        fileList.add("giraffe_logo.art");
+//        fileList.add("giraffe.art");
+//        fileList.add("giraffe.clht");
+//        fileList.add("giraffe2.art");
+//        fileList.add("gorilla_logo.art");
+//        fileList.add("gorilla.art");
+//        fileList.add("gorilla.clht");
+//        fileList.add("gorilla2.art");
 
         System.out.println("Please enter propagation delay and transmission delay");
 

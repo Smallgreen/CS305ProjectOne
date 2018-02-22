@@ -165,12 +165,12 @@ public class ClientApp
         }
     }
 
-    public static void storeInCache(ArrayList<String> cacheList, String fileName, String content){
+    public static void storeInCache(Hashtable table, String fileName, int modified, String content){
     //store, put in hashmap, deal with modified date
         //before request http, search in cache, send date
 
-        if(!cacheList.contains(fileName)){
-            cacheList.add(fileName);
+        if(!table.contains(fileName)){
+            table.put(fileName, modified);
         }
 
         try {
