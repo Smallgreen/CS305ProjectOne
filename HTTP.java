@@ -6,6 +6,8 @@ public class HTTP {
     private double version;
     private String html;
 
+    public HTTP(){}
+
     public HTTP(boolean isRequest,  String function, double version, String html,int isModified) {
         this.isRequest = isRequest;
         this.isModified = isModified;

@@ -62,79 +62,15 @@ public class ClientApp
         //while line is not empty
         while( line != null && !line.equals("") ) {
 
-            HTTP request;
+            HTTP request = new HTTP();
             String[] parseLine = line.split("\\s+");
-            byte[] byteArray;
-            String[] dataSplit;
-            String[] content;
+            String[] content = null;
+            String fileName = parseLine[2];
+            String cmd = parseLine[0];
 
             System.out.print("contains: "+ localCache.containsKey(parseLine[2]));
 
-            if (!localCache.containsKey(parseLine[2])) {
-                if (parseLine[0].equals("***")) {
-                    request = new HTTP(true, "GET", httpVersion, parseLine[2], 1);
-                } else {
-                    request = new HTTP(true, "TEXT", httpVersion, line, 1);
-                }
-
-            //convert lines into byte array, send to transoport layer and wait for response
-
-            byteArray = request.getRequest().getBytes();
-
-            transportLayer.send(byteArray);
-            byteArray = transportLayer.receive();
-            String str = new String(byteArray);
-
-            dataSplit = str.split("@");
-
-            System.out.println("currentKey: " + Integer.parseInt(dataSplit[3]));
-
-            storeInCache(localCache, parseLine[2], dataSplit[1], Integer.parseInt(dataSplit[3]));
-            content = dataSplit[1].split("\\r?\\n");
-        }
-        else{
-               int date = localCache.get(parseLine[2]);
-                if (parseLine[0].equals("***")) {
-                    request = new HTTP(true, "GET", httpVersion, parseLine[2], date);
-                } else {
-                    request = new HTTP(true, "TEXT", httpVersion, line, date);
-                }
-                byteArray = request.getRequest().getBytes();
-
-                transportLayer.send(byteArray);
-                byteArray = transportLayer.receive();
-                String str = new String(byteArray);
-                dataSplit = str.split("@");
-
-                if(Integer.parseInt(dataSplit[0]) == 304){
-                    System.out.println("300004");
-                    File f = new File("./cache/" + parseLine[2]);
-                    byteArray = Files.readAllBytes(f.toPath());
-                    content = new String(byteArray).split("\\r?\\n");
-                }
-                else{
-
-                    if (parseLine[0].equals("***")) {
-                        request = new HTTP(true, "GET", httpVersion, parseLine[2], 1);
-                    } else {
-                        request = new HTTP(true, "TEXT", httpVersion, line, 1);
-                    }
-
-                    //convert lines into byte array, send to transoport layer and wait for response
-
-                    byteArray = request.getRequest().getBytes();
-
-                    transportLayer.send(byteArray);
-                    byteArray = transportLayer.receive();
-                    String str2 = new String(byteArray);
-
-                    dataSplit = str2.split("@");
-
-                    storeInCache(localCache, parseLine[2], dataSplit[1], Integer.parseInt(dataSplit[3]));
-                    content = dataSplit[1].split("\\r?\\n");
-                }
-
-            }
+            content = sendHelper(localCache, fileName, cmd, request, httpVersion, transportLayer, line);
 
             //get webpage list
 
@@ -164,14 +100,12 @@ public class ClientApp
                             System.out.println(indexPage + ". " + parseLineEmbeded[3]);
                         }
                         continue;
-
                     }
                     else {
                         requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
                     }
 
                 }else{
-                    //WTFFF
                     //isText = true;
                     requestEmbeded = new HTTP(true,"TEXT", httpVersion,webpage.get(i),1);
                     //System.out.println("html "+parseLine[2]);
@@ -235,7 +169,84 @@ public class ClientApp
 
     }
 
-    public static void sendHelper(){
+    public static String[] sendHelper(Hashtable<String, Integer> localCache, String fileName, String cmd, HTTP request,
+                                  double httpVersion, TransportLayer transportLayer, String line){
+
+        byte[] byteArray;
+        String[] dataSplit;
+        String[] content;
+
+        if (!localCache.containsKey(fileName)) {
+            if (cmd.equals("***")) {
+                request = new HTTP(true, "GET", httpVersion, fileName, 1);
+            } else {
+                request = new HTTP(true, "TEXT", httpVersion, line, 1);
+            }
+
+            //convert lines into byte array, send to transoport layer and wait for response
+
+            byteArray = request.getRequest().getBytes();
+
+            transportLayer.send(byteArray);
+            byteArray = transportLayer.receive();
+            String str = new String(byteArray);
+
+            dataSplit = str.split("@");
+
+            System.out.println("currentKey: " + Integer.parseInt(dataSplit[3]));
+
+            storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
+            content = dataSplit[1].split("\\r?\\n");
+        }
+        else{
+            int date = localCache.get(fileName);
+            if (cmd.equals("***")) {
+                request = new HTTP(true, "GET", httpVersion, fileName, date);
+            } else {
+                request = new HTTP(true, "TEXT", httpVersion, line, date);
+            }
+            byteArray = request.getRequest().getBytes();
+
+            transportLayer.send(byteArray);
+            byteArray = transportLayer.receive();
+            String str = new String(byteArray);
+            dataSplit = str.split("@");
+
+            if(Integer.parseInt(dataSplit[0]) == 304){
+                System.out.println("300004");
+                File f = new File("./cache/" + fileName);
+                try {
+                    byteArray = Files.readAllBytes(f.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                content = new String(byteArray).split("\\r?\\n");
+            }
+            else{
+
+                if (cmd.equals("***")) {
+                    request = new HTTP(true, "GET", httpVersion, fileName, 1);
+                } else {
+                    request = new HTTP(true, "TEXT", httpVersion, line, 1);
+                }
+
+                //convert lines into byte array, send to transoport layer and wait for response
+
+                byteArray = request.getRequest().getBytes();
+
+                transportLayer.send(byteArray);
+                byteArray = transportLayer.receive();
+                String str2 = new String(byteArray);
+
+                dataSplit = str2.split("@");
+
+                storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
+                content = dataSplit[1].split("\\r?\\n");
+            }
+
+        }
+
+        return content;
 
     }
 
