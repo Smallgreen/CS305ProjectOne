@@ -10,7 +10,7 @@ public class ServerApp
     public static void main(String[] args) throws Exception
     {
 
-        Hashtable<String, Integer> serverCache = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> serverCache = new Hashtable<>();
         serverCache.put("animals_logo.art", 0);
         serverCache.put("animals.clht", 0);
         serverCache.put("cat_logo.art", 0);
