@@ -1,6 +1,7 @@
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 //This class represents the server application
 public class ServerApp
@@ -8,6 +9,26 @@ public class ServerApp
 
     public static void main(String[] args) throws Exception
     {
+
+        Hashtable<String, Integer> serverCache = new Hashtable<String, Integer>();
+        serverCache.put("animals_logo.art", 0);
+        serverCache.put("animals.clht", 0);
+        serverCache.put("cat_logo.art", 0);
+        serverCache.put("cat.art", 0);
+        serverCache.put("cat.clht", 0);
+        serverCache.put("cat2.art", 0);
+        serverCache.put("cat3.art", 0);
+        serverCache.put("giraffe_logo.art", 0);
+        serverCache.put("giraffe.art", 0);
+        serverCache.put("giraffe.clht", 0);
+        serverCache.put("giraffe2.art", 0);
+        serverCache.put("gorilla_logo.art", 0);
+        serverCache.put("gorilla.art", 0);
+        serverCache.put("gorilla.clht", 0);
+        serverCache.put("gorilla2.art", 0);
+
+
+
 
         ArrayList<String> fileList = new ArrayList<>();
         fileList.add("animals_logo.art");
@@ -38,12 +59,6 @@ public class ServerApp
         //create a new transport layer for server (hence true) (wait for client)
         TransportLayer transportLayer = new TransportLayer(true, prop_delay, trans_delay);
 
-        String logPath = "./serverLog";
-        File logDirect = new File(logPath);
-        if (! logDirect.exists()){
-            logDirect.mkdir();
-        }
-
         while( true )
         {
             //receive message from client, and send the "received" message back.
@@ -65,12 +80,12 @@ public class ServerApp
                 HTTP response;
                 String[] request = str.split("@");
                 //if html
-                boolean isModified = Boolean.parseBoolean(request[3]);
+                int isModified = Integer.parseInt(request[3]);
                 //System.out.println("test server "+request[1]);
                 if(request[0].equals("GET")){
-                    if(!isModified) {
+                    if(isModified != 0) {
                         //System.out.println("11111111");
-                        if(fileList.contains(request[2])){
+                        if(serverCache.containsKey(request[2])){
                         String fileName = request[2];
                         File f = new File("./server_mem/" + fileName);
                         byteArray = Files.readAllBytes(f.toPath());
@@ -87,7 +102,7 @@ public class ServerApp
                     }
                     }
                     else{
-                        //System.out.println("3333333");
+                        System.out.println("304");
                         //cache, if not modify; server, if modify
                         response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", isModified);
                         transportLayer.send(response.getResponse().getBytes());

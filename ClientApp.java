@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.Hashtable;
 
 //This class represents the client application
 public class ClientApp
@@ -13,7 +14,7 @@ public class ClientApp
     public static boolean persistent;
     public static boolean isExperi;
     public static int experCnt = 0;
-    private static int[] experArr = {1, 1, 3, 1};//1, 1, 2, 1, 3, 1
+    private static int[] experArr = {1, 1, 2, 1, 3, 1};//1, 1, 2, 1, 3, 1
 
     public static void main(String[] args) throws Exception
     {
@@ -33,14 +34,15 @@ public class ClientApp
         if (! directory.exists()){
             directory.mkdir();
         }
-        String logPath = "./localLog";
-        File logDirect = new File(logPath);
-        if (! logDirect.exists()){
-            logDirect.mkdir();
-        }
+
+        Hashtable localCache = new Hashtable();
+
+        //map: name - date
+        //map in server: read from log file
+        //map in client: fill with msg from server
 
         //store the list of file stored in local cache
-        ArrayList<String> cacheList = new ArrayList<>();
+        //ArrayList<String> cacheList = new ArrayList<>();
 
         System.out.println("Select mode: interactive / experiment");
 
@@ -64,9 +66,9 @@ public class ClientApp
             String[] parseLine = line.split("\\s+");
 
             if(parseLine[0].equals("***")){
-                request = new HTTP(true,"GET",httpVersion,parseLine[2],false);
+                request = new HTTP(true,"GET",httpVersion,parseLine[2],1);
             }else{
-                request = new HTTP(true,"TEXT", httpVersion,line,false);
+                request = new HTTP(true,"TEXT", httpVersion,line,1);
             }
 
             //convert lines into byte array, send to transoport layer and wait for response
@@ -113,13 +115,13 @@ public class ClientApp
 
                     }
                     else {
-                        requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], false);
+                        requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
                     }
 
                 }else{
                     //WTFFF
                     //isText = true;
-                    requestEmbeded = new HTTP(true,"TEXT", httpVersion,webpage.get(i),false);
+                    requestEmbeded = new HTTP(true,"TEXT", httpVersion,webpage.get(i),1);
                     //System.out.println("html "+parseLine[2]);
                 }
 
@@ -164,7 +166,8 @@ public class ClientApp
     }
 
     public static void storeInCache(ArrayList<String> cacheList, String fileName, String content){
-
+    //store, put in hashmap, deal with modified date
+        //before request http, search in cache, send date
 
         if(!cacheList.contains(fileName)){
             cacheList.add(fileName);
@@ -178,10 +181,8 @@ public class ClientApp
             e.printStackTrace();
         }
 
-
-
-
     }
+
 
     
 
