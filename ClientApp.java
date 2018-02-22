@@ -81,6 +81,7 @@ public class ClientApp
             for(int i=0;i<content.length;i++){
                 if(content[i].length() != 0 && !content[i].trim().isEmpty()) {
                     webpage.add(content[i]);
+                    System.out.println("the returned" + content[i]);
                 }
             }
 
@@ -102,7 +103,36 @@ public class ClientApp
                         continue;
                     }
                     else {
-                        requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
+                        if (!localCache.containsKey(parseLineEmbeded[2])){
+                            requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
+                        }
+                        else{
+                            int date = localCache.get(parseLineEmbeded[2]);
+                            requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], date);
+                            byte[] byteArr = requestEmbeded.getRequest().getBytes();
+                            transportLayer.send(byteArr);
+                            byteArr = transportLayer.receive();
+                            String str = new String(byteArr);
+                            String[] dataSplit = str.split("@");
+
+                            if(Integer.parseInt(dataSplit[0]) == 304){
+
+                                File f = new File("./cache/" + parseLineEmbeded[2]);
+                                try {
+                                    byteArr = Files.readAllBytes(f.toPath());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                System.out.println(new String(byteArr));
+                                continue;
+                            }
+                            else{
+                                requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
+                                localCache.remove(parseLineEmbeded[2]);
+                            }
+
+                        }
+
                     }
 
                 }else{
@@ -122,6 +152,11 @@ public class ClientApp
 
 
                     String[] response = strEmbeded.split("@");
+
+                    if(!localCache.containsKey(parseLineEmbeded[2])){
+                        storeInCache(localCache, parseLineEmbeded[2], response[1], Integer.parseInt(response[3]));
+                    }
+
                     if(!isExperi){
                         System.out.println(response[1]);
                     }
@@ -196,6 +231,7 @@ public class ClientApp
             System.out.println("currentKey: " + Integer.parseInt(dataSplit[3]));
 
             storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
+            System.out.print("11111");
             content = dataSplit[1].split("\\r?\\n");
         }
         else{
@@ -210,17 +246,23 @@ public class ClientApp
             transportLayer.send(byteArray);
             byteArray = transportLayer.receive();
             String str = new String(byteArray);
+            System.out.println("the received response: " + str);
             dataSplit = str.split("@");
 
             if(Integer.parseInt(dataSplit[0]) == 304){
                 System.out.println("300004");
                 File f = new File("./cache/" + fileName);
+                System.out.print("file name is " + fileName);
                 try {
                     byteArray = Files.readAllBytes(f.toPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                System.out.print("22222");
                 content = new String(byteArray).split("\\r?\\n");
+                System.out.println("content 1 : " + content[0]);
+                System.out.println("content 2 : " + content[1]);
+                System.out.println("content 3 : " + content[2]);
             }
             else{
 
@@ -241,6 +283,7 @@ public class ClientApp
                 dataSplit = str2.split("@");
 
                 storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
+                System.out.print("333333");
                 content = dataSplit[1].split("\\r?\\n");
             }
 

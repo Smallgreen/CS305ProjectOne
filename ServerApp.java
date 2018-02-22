@@ -27,26 +27,6 @@ public class ServerApp
         serverCache.put("gorilla.clht", 0);
         serverCache.put("gorilla2.art", 0);
 
-//
-//
-//
-//        ArrayList<String> fileList = new ArrayList<>();
-//        fileList.add("animals_logo.art");
-//        fileList.add("animals.clht");
-//        fileList.add("cat_logo.art");
-//        fileList.add("cat.art");
-//        fileList.add("cat.clht");
-//        fileList.add("cat2.art");
-//        fileList.add("cat3.art");
-//        fileList.add("giraffe_logo.art");
-//        fileList.add("giraffe.art");
-//        fileList.add("giraffe.clht");
-//        fileList.add("giraffe2.art");
-//        fileList.add("gorilla_logo.art");
-//        fileList.add("gorilla.art");
-//        fileList.add("gorilla.clht");
-//        fileList.add("gorilla2.art");
-
         System.out.println("Please enter propagation delay and transmission delay");
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -54,7 +34,7 @@ public class ServerApp
         String[] delays = readin.split("\\s+");
         int prop_delay = Integer.parseInt(delays[0]);
         int trans_delay = Integer.parseInt(delays[1]);
-        int delayCnt = 0;
+        double delayCnt = 0;
 
         //create a new transport layer for server (hence true) (wait for client)
         TransportLayer transportLayer = new TransportLayer(true, prop_delay, trans_delay);
@@ -114,7 +94,7 @@ public class ServerApp
                     response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],0);
 
                     transportLayer.send(response.getResponse().getBytes());
-                    delayCnt++;
+                    delayCnt = delayCnt + 0.5;
                 }
 
 
