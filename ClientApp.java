@@ -158,7 +158,7 @@ public class ClientApp
                 if(Integer.parseInt(response[0]) == 200){
                     //saving to local cache
                     if(!localCache.containsKey(parseLineEmbeded[2])){
-                        storeInCache(localCache, parseLineEmbeded[2], response[1], Integer.parseInt(response[3]));
+                        //storeInCache(localCache, parseLineEmbeded[2], response[1], Integer.parseInt(response[3]));
                     }
                     if(!isExperi){
                         System.out.println(response[1]);
@@ -235,7 +235,7 @@ public class ClientApp
 
             if(Integer.parseInt(dataSplit[0]) == 200 ){
 
-                storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
+                //storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
                 content = dataSplit[1].split("\\r?\\n");
             }
                 else {
@@ -289,7 +289,7 @@ public class ClientApp
 
                 dataSplit = str2.split("@");
 
-                storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
+                //storeInCache(localCache, fileName, dataSplit[1], Integer.parseInt(dataSplit[3]));
                 content = dataSplit[1].split("\\r?\\n");
             }
 

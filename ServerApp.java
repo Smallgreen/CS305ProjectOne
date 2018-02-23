@@ -94,6 +94,7 @@ public class ServerApp
                         response = new HTTP(false,"404",Double.parseDouble(request[1]),"NOT FOUND", 0);
                         transportLayer.send(response.getResponse().getBytes());
                         delayCnt = delayCnt+0.25;
+
                     }
                     }
                     else{
@@ -127,7 +128,10 @@ public class ServerApp
                     response = new HTTP(false,"200",Double.parseDouble(request[1]),request[2],0);
 
                     transportLayer.send(response.getResponse().getBytes());
-                    delayCnt++;
+                    if(Double.parseDouble(request[1]) == 1.1){
+                        delayCnt = delayCnt - 0.25;
+                    }
+
                 }
 
 
