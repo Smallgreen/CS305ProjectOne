@@ -127,7 +127,9 @@ public class ClientApp
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                                System.out.println(new String(byteArr));
+                                if(!isExperi) {
+                                    System.out.println(new String(byteArr));
+                                }
                                 continue;
                             }
                             else{
