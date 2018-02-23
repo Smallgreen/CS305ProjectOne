@@ -1,7 +1,8 @@
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 //This class represents the server application
 public class ServerApp
@@ -26,6 +27,23 @@ public class ServerApp
         serverCache.put("gorilla.art", 0);
         serverCache.put("gorilla.clht", 0);
         serverCache.put("gorilla2.art", 0);
+
+        //hashtable for storing contents
+        Hashtable<String, String> checkModified = new Hashtable<>();
+
+        String files;
+        Set<String> keys = serverCache.keySet();
+        Iterator<String> itr = keys.iterator();
+        //iterate through serverCache and save the file
+        while (itr.hasNext()) {
+            // Getting Key
+            files = itr.next();
+            File f = new File("./server_mem/" + files);
+            byte[] curContent = Files.readAllBytes(f.toPath());
+
+            checkModified.put(files,new String((curContent)));
+            //System.out.println(checkModified.get(files));
+        }
 
         System.out.println("Please enter propagation delay and transmission delay");
 
@@ -67,9 +85,7 @@ public class ServerApp
 
                         if(serverCache.containsKey(request[2])){
                         String fileName = request[2];
-                        File f = new File("./server_mem/" + fileName);
-                        byteArray = Files.readAllBytes(f.toPath());
-                        response = new HTTP(false, "200", Double.parseDouble(request[1]), new String(byteArray), 0);
+                        response = new HTTP(false, "200", Double.parseDouble(request[1]), checkModified.get(fileName), 0);
                         transportLayer.send(response.getResponse().getBytes());
                         delayCnt++;
 
@@ -82,9 +98,29 @@ public class ServerApp
                     }
                     else{
                         //cache, if not modify; server, if modify
-                        response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", 0);
+                        //check file is modified or not
+                        String fileName = request[2];
+                        File f = new File("./server_mem/" + fileName);
+                        byteArray = Files.readAllBytes(f.toPath());
+                        if(!checkModified.get(fileName).equals(new String(byteArray))){
+                            serverCache.put(fileName, 2);//change date
+                            checkModified.put(fileName, new String(byteArray));//upgrade file content
+                        }
+
+                        //if date is same, not modified
+                        if(isModified == serverCache.get(request[2])){
+                            response = new HTTP(false,"304",Double.parseDouble(request[1]),"NOT MODIFIED", 0);
+                            delayCnt = delayCnt+0.25;
+                        }
+                        else{
+                            //sent back another code, reset server date
+                            response = new HTTP(false,"304",Double.parseDouble(request[1]),"MODIFIED", 0);
+                            serverCache.put(fileName, 0);
+                            delayCnt = delayCnt+0.25;
+
+                        }
                         transportLayer.send(response.getResponse().getBytes());
-                        delayCnt = delayCnt+0.25;
+
                     }
                 }
                 else{

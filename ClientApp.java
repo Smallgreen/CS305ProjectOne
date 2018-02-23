@@ -119,7 +119,8 @@ public class ClientApp
                             String[] dataSplit = str.split("@");
 
                             //if it did not modified, load from cache
-                            if(Integer.parseInt(dataSplit[0]) == 304){
+                            if(Integer.parseInt(dataSplit[0]) == 304 && dataSplit[1].equals("NOT MODIFIED")){
+
                                 File f = new File("./cache/" + parseLineEmbeded[2]);
                                 try {
                                     byteArr = Files.readAllBytes(f.toPath());
@@ -131,6 +132,7 @@ public class ClientApp
                             }
                             else{
                                 //if it is modified, request from server again
+
                                 requestEmbeded = new HTTP(true, "GET", httpVersion, parseLineEmbeded[2], 1);
                                 localCache.remove(parseLineEmbeded[2]);
                             }
@@ -180,7 +182,7 @@ public class ClientApp
             }
             else{
                 line = index.get(experArr[experCnt] - 1);
-                System.out.println("expe" + experArr[experCnt]);
+                System.out.println("experiment on page. " + experArr[experCnt]);
                 if(experCnt == experArr.length - 1){
                     break;
                 }
@@ -254,7 +256,7 @@ public class ClientApp
 
             dataSplit = str.split("@");
 
-            if(Integer.parseInt(dataSplit[0]) == 304){
+            if(Integer.parseInt(dataSplit[0]) == 304 && dataSplit[1].equals("NOT MODIFIED")){
 
                 File f = new File("./cache/" + fileName);
 
